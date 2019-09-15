@@ -1,2 +1,4 @@
-const url = "INSERT_DB_URL_HERE"
+const dotenv = require('dotenv')
+dotenv.config();
+const url = process.env.URL;
 module.exports = { url }
