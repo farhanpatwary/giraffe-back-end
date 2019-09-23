@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 const val = require('validator');
 
 const Post = mongoose.model('Post', {
-    title:{
-        type:String,
+    title: {
+        type: String,
         required: true,
         default: 'An interesting title'
     },
@@ -16,7 +16,7 @@ const Post = mongoose.model('Post', {
         type: String,
         required: true,
     },
-    
+
 })
 
 module.exports = Post

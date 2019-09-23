@@ -1,34 +1,46 @@
 const express = require('express');
-const user = require('../models/user')
+const User = require('../models/user')
+const auth = require('../middleware/auth')
 
 const user_router = express.Router();
 
-user_router.get('/users', async (req, res) => {
-    try {
-        const users = await user.find({})
-        res.send(users)
-    } catch (e) {
-        res.status(500).send()
-    }
+user_router.get('/users/me', auth, async (req, res) => {
+    res.send(req.user)
 })
 
 user_router.get('/users/:id', async (req, res) => {
     const user_id = req.params.id
     try {
-        const user = await user.findById(user_id)
+        const user = await User.findById(user_id)
         res.send(user)
     } catch (e) {
+        console.log(e)
         res.status(500).send()
     }
 })
 
 user_router.post('/users', async (req, res) => {
-    const new_user = new user(req.body)
+    const user = new User(req.body)
     try {
-        await new_user.save()
-        res.send(new_user)
+        await user.save()
+        const token = await user.generateAuthToken()
+        res.status(201).send({user, token})
     } catch (e) {
-        return console.log(e)
+        res.status(400).send(e)
+    }
+})
+
+user_router.post('/users/login', async (req, res) => {
+    try {
+        const user = await User.findByCredentials(req.body.email, req.body.password)
+        const token = await user.generateAuthToken()
+        res.send({
+            user,
+            token
+        })
+    } catch (e) {
+        console.log(e)
+        res.status(400).send()
     }
 })
 
@@ -40,27 +52,28 @@ user_router.patch('/users/:id', async (req, res) => {
         res.status(400).send('Error: Invalid Update.')
     }
     try {
-        const new_user = await user.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true,
-        })
-        if (!new_user) {
+        const user = await User.findById(req.params.id)
+        updates.forEach((update) => user[update] = req.body[update])
+        await user.save()
+        if (!user) {
             return res.status(404).send
         }
-        res.send(new_user)
+        res.send(user)
     } catch (e) {
+        console.log(e)
         res.status(400).send()
     }
 })
 
 user_router.delete('/users/:id', async (req, res) => {
     try {
-        const del_user = user.findByIdAndDelete(req.params.id)
-        if (!del_user) {
+        const user = User.findByIdAndDelete(req.params.id)
+        if (!user) {
             return res.status(404).send
         }
-        res.send(del_user)
+        res.send(user)
     } catch (e) {
+        console.log(e)
         res.status(500).send()
     }
 })
