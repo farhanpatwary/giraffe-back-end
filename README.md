@@ -5,7 +5,6 @@ Create .env file as such:
 ```
 NODE_ENV=development
 DB_URL=INSERT_DB_URL_HERE
-
 ```
 
 Install all dependencies
