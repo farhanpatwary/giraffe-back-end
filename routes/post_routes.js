@@ -5,9 +5,21 @@ const auth = require('../middleware/auth');
 const post_router = express.Router();
 
 post_router.get('/posts', auth, async (req, res) => {
+    const sort = {}
+    if (req.query.sortBy) {
+        const query_parts = req.query.sortBy.split(':')
+        sort[query_parts[0]] = query_parts[1] === 'desc' ? -1 : 1
+    }
     try {
-        await req.user.populate('tasks').execPopulate()
-        res.send(req.user.tasks)
+        await req.user.populate({
+            path: 'posts',
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort
+            }
+        }).execPopulate()
+        res.send(req.user.posts)
     } catch (e) {
         res.status(500).send()
     }
