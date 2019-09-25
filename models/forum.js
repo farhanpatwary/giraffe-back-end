@@ -6,6 +6,13 @@ const Task = mongoose.model('Forum', {
         type: String,
         unique: true,
     },
+    posts: {
+        [{
+            post: {
+            
+            }
+        }]
+    },
     number_of_subs: {
         type: Number,
         default: 0,

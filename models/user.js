@@ -3,6 +3,8 @@ const val = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 
+const post = require('../models/post')
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -49,6 +51,12 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
+userSchema.virtual('tasks', {
+    ref: 'Post',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
 userSchema.methods.toJSON = function () {
     const user = this
     const userObj = user.toObject()
@@ -83,6 +91,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
 
     return user
 }
+
 // hashes password
 userSchema.pre('save', async function (next) {
     const user = this
@@ -90,6 +99,12 @@ userSchema.pre('save', async function (next) {
         const salt = await bcrypt.genSaltSync(10)
         user.password = await bcrypt.hash(user.password, salt)
     }
+    next()
+})
+
+userSchema.pre('remove', async function(next) {
+    const user = this
+    await post.deleteMany({owner: user._id})
     next()
 })
 

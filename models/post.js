@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const val = require('validator');
 
 const Post = mongoose.model('Post', {
     title: {
@@ -15,6 +14,11 @@ const Post = mongoose.model('Post', {
     forum: {
         type: String,
         required: true,
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
     },
 
 })
