@@ -1,23 +1,23 @@
 const mongoose = require('mongoose')
 const post_schema = new mongoose.Schema({
     title: {
-        type: String,
-        required: true,
+        type: String,    
         default: 'An interesting title'
     },
     description: {
-        type: String,
-        required: true,
+        type: String,    
         trim: true
     },
     forum: {
-        type: String,
-        required: true,
+        type: String,    
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
+    },
+    image: {
+        type: Buffer
     },
 }, {
     timestamps:true

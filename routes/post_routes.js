@@ -2,6 +2,19 @@ const express = require('express');
 const post = require('../models/post');
 const auth = require('../middleware/auth');
 
+const multer = require('multer');
+const upload = multer({
+    limits: {
+        fileSize: 4000000
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('Please upload a .png or .jpg or .jpeg file'))
+        }
+        cb(undefined, true)
+    }
+})
+
 const post_router = express.Router();
 
 post_router.get('/posts', auth, async (req, res) => {
@@ -38,11 +51,16 @@ post_router.get('/posts/:id', auth, async (req, res) => {
     }
 })
 
-post_router.post('/posts', auth, async (req, res) => {
+post_router.post('/posts', auth, upload.single('upload'), async (req, res) => {
     const new_post = new post({
         ...req.body,
-        owner: req.user._id
+        owner: req.user._id,
     })
+    try{
+        if(req.file.buffer){
+            new_post.image = req.file.buffer
+        }
+    } catch(e) {}
     try {
         await new_post.save()
         res.send(new_post)
