@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const val = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
+const secretfile = require('../config/secret')
+const secret = secretfile.secret
 
 const post = require('../models/post')
 
@@ -43,8 +45,8 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    avatar:{
-        type:Buffer
+    avatar: {
+        type: Buffer
     },
     tokens: [{
         token: {
@@ -73,7 +75,7 @@ userSchema.methods.generateAuthToken = async function () {
     const user = this
     const token = jwt.sign({
         _id: user._id.toString()
-    }, 'thisisanewtoken')
+    }, secret)
     user.tokens = user.tokens.concat({
         token
     })
@@ -107,9 +109,11 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
-userSchema.pre('remove', async function(next) {
+userSchema.pre('remove', async function (next) {
     const user = this
-    await post.deleteMany({owner: user._id})
+    await post.deleteMany({
+        owner: user._id
+    })
     next()
 })
 
