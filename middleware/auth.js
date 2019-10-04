@@ -1,3 +1,6 @@
+// Authentication Middleware
+// Verifies that the token provided is a valid token
+
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const secretfile = require('../config/secret')
