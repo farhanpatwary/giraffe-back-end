@@ -65,7 +65,6 @@ post_router.post('/posts', auth, upload.single('upload'), async (req, res) => {
         await new_post.save()
         res.send(new_post)
     } catch (e) {
-        return console.log(e)
     }
 })
 
@@ -105,7 +104,6 @@ post_router.delete('/posts/:id', auth, async (req, res) => {
         }
         res.send(deleted_post)
     } catch (e) {
-        console.log(e)
         res.status(500).send()
     }
 })

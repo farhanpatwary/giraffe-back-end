@@ -16,7 +16,4 @@ app.use(user_router)
 app.use(post_router)
 app.use(admin_router)
 
-const port = process.env.PORT || 8000;
-app.listen(port, () => {
-	console.log("Listening on port: " + port);
-})
+module.exports = app 
