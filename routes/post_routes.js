@@ -17,7 +17,27 @@ const upload = multer({
 
 const post_router = express.Router();
 
-post_router.get('/posts', auth, async (req, res) => {
+post_router.get('/posts', async (req, res) => {
+    const sort = {}
+    if (req.query.sortBy) {
+        const query_parts = req.query.sortBy.split(':')
+        sort[query_parts[0]] = query_parts[1] === 'desc' ? -1 : 1
+    }
+    try{
+        await post.find({}, null,{
+            limit: parseInt(req.query.limit),
+            skip: parseInt(req.query.skip),
+            sort
+        }, (err, posts) => {
+            if(err){res.send(err)}
+            res.send(posts)
+        })
+    } catch(e){
+        res.send(e)
+    }
+})
+
+post_router.get('/posts/me', auth, async (req, res) => {
     const sort = {}
     if (req.query.sortBy) {
         const query_parts = req.query.sortBy.split(':')
@@ -56,16 +76,15 @@ post_router.post('/posts', auth, upload.single('upload'), async (req, res) => {
         ...req.body,
         owner: req.user._id,
     })
-    try{
-        if(req.file.buffer){
+    try {
+        if (req.file.buffer) {
             new_post.image = req.file.buffer
         }
-    } catch(e) {}
+    } catch (e) {}
     try {
         await new_post.save()
         res.send(new_post)
-    } catch (e) {
-    }
+    } catch (e) {}
 })
 
 post_router.patch('/posts/:id', auth, async (req, res) => {
