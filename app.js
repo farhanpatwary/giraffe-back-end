@@ -1,6 +1,5 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const cors = require('cors')
 
 const app_router = require('./routes/app_routes')
 const user_router = require('./routes/user_routes')
@@ -9,9 +8,7 @@ const admin_router = require ('./routes/admin_routes')
 require('./db/mongoose')
 
 const app = express()
-
 app.use(express.json())
-app.use(cors())
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
