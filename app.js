@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 const app_router = require('./routes/app_routes')
 const user_router = require('./routes/user_routes')
@@ -12,6 +13,7 @@ app.use(express.json())
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
+app.use(cors())
 app.use(user_router)
 app.use(post_router)
 app.use(admin_router)
