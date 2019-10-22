@@ -44,13 +44,8 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 7,
         trim: true,
-        validate(value) {
-            if (value.toLowerCase().includes('password')) {
-                throw new Error('Password cannot contain the word password')
-            }
-        }
+        minlength: 7
     },
     avatar: {
         type: Buffer
@@ -65,12 +60,15 @@ const userSchema = new mongoose.Schema({
     timestamps: true,
 })
 
+// Used to populate user posts
 userSchema.virtual('posts', {
     ref: 'Post',
     localField: '_id',
     foreignField: 'owner'
 })
 
+// toJSON() method is called when returning user
+// This will return the user without returning the hashed password or JWTs
 userSchema.methods.toJSON = function () {
     const user = this
     const userObj = user.toObject()
@@ -78,11 +76,14 @@ userSchema.methods.toJSON = function () {
     delete userObj.tokens
     return userObj
 }
+
+// Generates a JWT on authentication
+// Token contains user ID
 userSchema.methods.generateAuthToken = async function () {
     const user = this
     const token = jwt.sign({
         _id: user._id.toString()
-    }, secret)
+    }, secret, { expiresIn: 60 })
     user.tokens = user.tokens.concat({
         token
     })
@@ -90,23 +91,24 @@ userSchema.methods.generateAuthToken = async function () {
     return token
 }
 
+// Used for Sign In and Sign Up
+// Finds user if user exists
+// If user exists, bcrypt checks if provided user details are correct 
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({
         email
     })
     if (!user) {
-        throw new Error('Unable to login')
+        throw 'User Does not exist.'
     }
-
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
-        throw new Error('Unable to login')
+        throw 'Wrong credentials, please enter correct email and password.'
     }
-
     return user
 }
 
-// hashes password
+// Hashes password before saving to db
 userSchema.pre('save', async function (next) {
     const user = this
     if (user.isModified('password')) {
@@ -116,6 +118,7 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
+// Deletes all Posts created by user
 userSchema.pre('remove', async function (next) {
     const user = this
     await post.deleteMany({

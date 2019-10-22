@@ -2,10 +2,12 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
-const app_router = require('./routes/app_routes')
 const user_router = require('./routes/user_routes')
 const post_router = require('./routes/post_routes')
 const admin_router = require ('./routes/admin_routes')
+
+// File at ./db/mongoose connects to Mongoose Database
+// ./db/mongoose contains required Mongoose Config
 require('./db/mongoose')
 
 const app = express()

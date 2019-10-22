@@ -6,6 +6,12 @@ const User = require('../models/user')
 const secretfile = require('../config/secret')
 const secret = secretfile.secret
 
+// Authentication Middleware
+// Checks for Authorization header in HTTP request
+// Authorization Header will be as such:
+// ```Bearer TOKEN``` where TOKEN is the JWT
+// ```Bearer TOKEN``` becomes ```TOKEN``` and is then verified by jwt library
+// If the verification succeeds middleware will attach token and user to request body
 const auth = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '')
@@ -21,7 +27,11 @@ const auth = async (req, res, next) => {
         req.user = user
         next()
     } catch (e) {
-        console.log(e)
+        if(e.name === 'TokenExpiredError'){
+            return res.status(401).send({
+                error: 'Token Expired. Please Sign In again. '
+            })
+        }
         res.status(401).send({
             error: 'Please Authenticate. '
         })

@@ -3,6 +3,9 @@ const User = require('../models/user')
 const auth = require('../middleware/auth')
 const sharp = require('sharp');
 
+// Allows for image uploads
+// Max image size is 4MB
+// Only accepts .jpg .jpeg .png files
 const multer = require('multer');
 const upload = multer({
     limits: {
@@ -18,10 +21,12 @@ const upload = multer({
 
 const user_router = express.Router();
 
+// GET User data
 user_router.get('/users/me', auth, async (req, res) => {
     res.send(req.user)
 })
 
+// Implement Search for Users
 // user_router.get('/users/:name', async (req, res) => {
 //     const user_name = req.params.name
 //     try {
@@ -33,6 +38,10 @@ user_router.get('/users/me', auth, async (req, res) => {
 //     }
 // })
 
+// Sign Up
+// Saves User to DB and then generates JWT using user.generateAuthToken()
+// Users must use unique email addresses 
+// Passwords must be longer than 7 characters
 user_router.post('/users', async (req, res) => {
     const user = new User(req.body)
     try {
@@ -43,10 +52,17 @@ user_router.post('/users', async (req, res) => {
             token
         })
     } catch (e) {
+        if(e.code === 11000 ){
+            return res.status(400).send('User already exists.')
+        }
+        if(e.name === "ValidationError" ){
+            return res.status(400).send('Password needs to be at least 7 characters.')
+        }
         res.status(400).send(e)
     }
 })
 
+// Upload user avatar
 user_router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
     const buffer = await sharp(req.file.buffer).resize({
         width: 200,
@@ -85,6 +101,8 @@ user_router.delete('/users/me/avatar', auth, async (req, res) => {
     })
 })
 
+// Login
+// Successful Login will return the corresponding user data and the token
 user_router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
@@ -94,7 +112,7 @@ user_router.post('/users/login', async (req, res) => {
             token
         })
     } catch (e) {
-        res.status(400).send()
+        res.status(400).send(e)
     }
 })
 
@@ -120,6 +138,7 @@ user_router.post('/users/logoutall', auth, async (req, res) => {
     }
 })
 
+// Update user data
 user_router.patch('/users/me', auth, async (req, res) => {
     const updates = Object.keys(req.body)
     const valid_updates = ['name', 'age', 'email', 'password']

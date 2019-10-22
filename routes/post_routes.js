@@ -2,6 +2,9 @@ const express = require('express');
 const post = require('../models/post');
 const auth = require('../middleware/auth');
 
+// Allows for image uploads
+// Max image size is 4MB
+// Only accepts .jpg .jpeg .png files
 const multer = require('multer');
 const upload = multer({
     limits: {
@@ -36,7 +39,8 @@ post_router.get('/posts', async (req, res) => {
         res.send(e)
     }
 })
-
+// req.query.sortBy would be as such:
+// sortBy:desc
 post_router.get('/posts/me', auth, async (req, res) => {
     const sort = {}
     if (req.query.sortBy) {
