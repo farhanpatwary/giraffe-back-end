@@ -3,9 +3,12 @@ A reddit clone I am building to learn Node.js
 
 Create .env file as such:
 ```
-NODE_ENV=development
-DB_URL=INSERT_DB_URL_HERE
-SECRET=INSERT_SECRET_HERE
+PORT=
+DB_URL=
+DB_URL_TEST=
+SECRET=
+ADMIN_SECRET=
+
 ```
 
 Install all dependencies
