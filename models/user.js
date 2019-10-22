@@ -30,7 +30,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        unique: true,
+        index: {
+            unique: true, 
+            dropDups: true
+        },
         validate(value) {
             if (!val.isEmail(value)) {
                 throw new Error('Email is invalid.')

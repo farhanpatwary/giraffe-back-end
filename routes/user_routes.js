@@ -34,7 +34,7 @@ user_router.get('/users/me', auth, async (req, res) => {
 // })
 
 user_router.post('/users', async (req, res) => {
-	const user = new User(req.body)
+    const user = new User(req.body)
     try {
         await user.save()
         const token = await user.generateAuthToken()
