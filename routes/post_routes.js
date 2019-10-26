@@ -76,8 +76,11 @@ post_router.get('/posts/:id', auth, async (req, res) => {
 })
 
 post_router.post('/posts', auth, upload.single('upload'), async (req, res) => {
+    console.log(req.body)
     const new_post = new post({
-        ...req.body,
+        title: req.body.title,
+        description: req.body.description,
+        image: req.body.upload,
         owner: req.user._id,
     })
     try {
