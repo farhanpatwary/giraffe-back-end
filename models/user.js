@@ -83,12 +83,30 @@ userSchema.methods.generateAuthToken = async function () {
     const user = this
     const token = jwt.sign({
         _id: user._id.toString()
-    }, secret, { expiresIn: 60 })
+    }, secret, { expiresIn: 60 * 60 })
     user.tokens = user.tokens.concat({
         token
     })
     await user.save()
     return token
+}
+
+// clearOldTokens() gets called whenever user signs in
+// Deletes expired tokens from user's tokens array
+userSchema.methods.clearOldTokens = async function(){
+    const user = this
+    const tokens_new = await user.tokens.filter((token)=>{
+        try {
+            jwt.verify(token.token, secret)
+            return true
+        } catch(e){
+            if(e.name === 'TokenExpiredError'){
+                return false
+            }
+        }
+    })
+    user.tokens = tokens_new
+    await user.save()
 }
 
 // Used for Sign In and Sign Up
