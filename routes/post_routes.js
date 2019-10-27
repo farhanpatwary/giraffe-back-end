@@ -75,13 +75,29 @@ post_router.get('/posts/:id', auth, async (req, res) => {
     }
 })
 
+post_router.get('/posts/:id/image', async (req, res) => {
+    const post_id = req.params.id
+    try {
+        const my_post = await post.findOne({
+            _id:post_id
+        })
+        if(!my_post){
+            throw 'Post not found'
+        }
+        res.set('Content-Type', 'image/jpg')
+        res.send(my_post.image)
+    } catch (e) {
+        res.status(404).send(e)
+    }
+})
+
 post_router.post('/posts', auth, upload.single('upload'), async (req, res) => {
-    console.log(req.body)
     const new_post = new post({
         title: req.body.title,
         description: req.body.description,
         image: req.body.upload,
         owner: req.user._id,
+        ownername: req.user.name
     })
     try {
         if (req.file.buffer) {
