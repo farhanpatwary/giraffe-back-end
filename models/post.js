@@ -16,6 +16,9 @@ const post_schema = new mongoose.Schema({
         required: true,
         ref: 'User'
     },
+    ownername:{
+        type: String,
+    },
     image: {
         type: Buffer
     },
