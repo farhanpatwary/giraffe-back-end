@@ -103,11 +103,15 @@ post_router.post('/posts', auth, upload.single('upload'), async (req, res) => {
         if (req.file.buffer) {
             new_post.image = req.file.buffer
         }
-    } catch (e) {}
+    } catch (e) {
+
+    }
     try {
         await new_post.save()
         res.send(new_post)
-    } catch (e) {}
+    } catch (e) {
+
+    }
 })
 
 post_router.patch('/posts/:id', auth, async (req, res) => {
