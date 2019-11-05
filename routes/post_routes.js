@@ -8,7 +8,7 @@ const auth = require('../middleware/auth');
 const multer = require('multer');
 const upload = multer({
     limits: {
-        fileSize: 4000000
+        fileSize: 1000000
     },
     fileFilter(req, file, cb) {
         if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
