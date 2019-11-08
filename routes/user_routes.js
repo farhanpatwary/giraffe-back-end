@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../models/user')
+const Post = require('../models/post')
 const auth = require('../middleware/auth')
 const sharp = require('sharp');
 
@@ -75,6 +76,34 @@ user_router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, 
     res.status(400).send({
         error: error.message
     })
+})
+
+user_router.get('/users/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+        res.send({user})
+    } catch (e) {
+        res.status(404).send()
+    }
+})
+
+user_router.get('/users/:id/posts', async (req, res) => {
+    const sort = {}
+    if (req.query.sortBy) {
+        const query_parts = req.query.sortBy.split(':')
+        sort[query_parts[0]] = query_parts[1] === 'desc' ? -1 : 1
+    }
+    try {
+        const posts = await Post.find({
+            owner: req.params.id
+        }, null, {
+            limit: parseInt(req.query.limit),
+            skip: parseInt(req.query.skip),
+        })
+        res.send({posts})
+    } catch (e) {
+        res.status(404).send()
+    }
 })
 
 user_router.get('/users/:id/avatar', async (req, res) => {
