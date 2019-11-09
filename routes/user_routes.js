@@ -99,6 +99,7 @@ user_router.get('/users/:id/posts', async (req, res) => {
         }, null, {
             limit: parseInt(req.query.limit),
             skip: parseInt(req.query.skip),
+            sort
         })
         res.send({posts})
     } catch (e) {
