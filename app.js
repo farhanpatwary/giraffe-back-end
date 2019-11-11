@@ -15,6 +15,9 @@ app.use(express.json())
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
+app.get('/',(req,res)=>{
+	res.send('default')
+})
 app.use(cors())
 app.use(user_router)
 app.use(post_router)
