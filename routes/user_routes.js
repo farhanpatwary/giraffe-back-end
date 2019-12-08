@@ -143,7 +143,12 @@ user_router.post('/users/login', async (req, res) => {
             token
         })
     } catch (e) {
-        res.status(400).send(e)
+        if(e === 'User Does not exist.'){
+            res.status(404).send(e)
+        } else {
+            res.status(400).send(e)
+        }
+        
     }
 })
 
