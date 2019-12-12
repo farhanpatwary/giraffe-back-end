@@ -12,6 +12,25 @@ SECRET=
 ADMIN_SECRET=
 
 ```
+after creating the .env file your project directory should look something like this:  
+```
+.
+├── config
+├── db
+├── .git
+├── middleware
+├── models
+├── node_modules
+├── routes
+├── tests
+├── app.js
+├── .env
+├── .gitignore
+├── index.js
+├── package.json
+├── package-lock.json
+└── README.md
+```
 
 ## Install all dependencies
 ```
