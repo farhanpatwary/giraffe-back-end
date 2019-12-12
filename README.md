@@ -1,6 +1,8 @@
-# subpost
+# Giraffe
 A reddit clone I am building to learn Node.js
 
+# Usage 
+## Create environment variables file
 Create .env file as such:
 ```
 PORT=
@@ -11,12 +13,12 @@ ADMIN_SECRET=
 
 ```
 
-Install all dependencies
+## Install all dependencies
 ```
 npm install
 ```
 
-Start web server (default port is 8000)
+## Start web server (default port is 8000)
 ```
 npm run start
 ```
